@@ -12,8 +12,8 @@ public class FileUtils {
     static HashMap<Integer, Integer> frequency = new HashMap<>();
 
     //create a priority queue that stores all hashmap entries, ordered in ascending frequency order
-    static PriorityQueue<HashMap.Entry<Integer, Integer>> priorityQueue = new PriorityQueue<>(Comparator.comparingInt(Map.Entry::getValue));
-
+//    static PriorityQueue<HashMap.Entry<Integer, Integer>> priorityQueue = new PriorityQueue<>(Comparator.comparingInt(Map.Entry::getValue));
+    static PriorityQueue<Node> priorityQueue = new PriorityQueue<>();
 
     //this method takes in a file name
     //reads the file character by character and populates the frequency hashmap and the priority queue
@@ -37,13 +37,44 @@ public class FileUtils {
             e.printStackTrace();
         }
 
-        //add all hashmap entries into priority queue
-        priorityQueue.addAll(frequency.entrySet());
+        //add nodes from hashmap into priority queue
+        frequency.forEach((key, value) -> {
+            Node node = new Node((int) key, (int) value);
+            priorityQueue.add(node);
+        });
 
-        //remove all elements from queue to show that they are removed in order of the smallest frequency
-        while(!priorityQueue.isEmpty())
+
+        //create the huffman tree and print it
+        Node root = createHuffmanTree();
+        printTree(root);
+    }
+
+    public static Node createHuffmanTree() {
+
+        int size = priorityQueue.size();
+        System.out.println(size);
+        Node x, y;
+
+        for(int i=1; i<size; i++)
         {
-            System.out.println(priorityQueue.poll());
+            Node node = new Node();
+            x = priorityQueue.poll();
+            y = priorityQueue.poll();
+            node.left = x;
+            node.right = y;
+            System.out.println(i +"\t" + (char)x.character +": " + x.freq + "\t" + (char)y.character +": " + y.freq);
+            node.freq = x.freq + y.freq;
+            priorityQueue.add(node);
+        }
+
+        return priorityQueue.poll();
+    }
+
+    public static void printTree (Node rootNode){
+        if(rootNode != null){
+            printTree(rootNode.getLeft());
+            System.out.println((char)rootNode.character + ": " + rootNode.freq);
+            printTree(rootNode.getRight());
         }
     }
 }
