@@ -8,6 +8,9 @@ import java.util.PriorityQueue;
 
 public class FileUtils {
 
+    static String code = "";
+    static Node root;
+
     //create a hashmap that stores each character's ascii code and its frequency in the file
     static HashMap<Integer, Integer> frequency = new HashMap<>();
 
@@ -66,8 +69,23 @@ public class FileUtils {
             node.freq = x.freq + y.freq;
             priorityQueue.add(node);
         }
-
+        root = priorityQueue.peek();
         return priorityQueue.poll();
+    }
+
+    public static void traverseInorder (Node rootNode){
+        if(rootNode.getLeft() == null && rootNode.getRight() == null){
+            System.out.println((char)rootNode.character + ": " + code);
+        }
+        else{
+            code+="0";
+            traverseInorder(rootNode.getLeft());
+            code = code.substring(0,code.length()-1);
+            code+="1";
+            //visit
+            traverseInorder(rootNode.getRight());
+            code = code.substring(0,code.length()-1);
+        }
     }
 
     public static void printTree (Node rootNode){
