@@ -14,6 +14,8 @@ public class FileUtils {
     //create a hashmap that stores each character's ascii code and its frequency in the file
     static HashMap<Integer, Integer> frequency = new HashMap<>();
 
+    static HashMap<Character, String> codes = new HashMap<>();
+
     //create a priority queue that stores all hashmap entries, ordered in ascending frequency order
 //    static PriorityQueue<HashMap.Entry<Integer, Integer>> priorityQueue = new PriorityQueue<>(Comparator.comparingInt(Map.Entry::getValue));
     static PriorityQueue<Node> priorityQueue = new PriorityQueue<>();
@@ -76,6 +78,9 @@ public class FileUtils {
     public static void traverseInorder (Node rootNode){
         if(rootNode.getLeft() == null && rootNode.getRight() == null){
             System.out.println((char)rootNode.character + ": " + code);
+            codes.put((char)rootNode.character, code);
+            System.out.println("hm: "+ codes.get((char)rootNode.character));
+
         }
         else{
             code+="0";
