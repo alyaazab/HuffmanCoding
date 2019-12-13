@@ -101,6 +101,8 @@ public class FileUtils {
                     outputStream.write(0);
                 else
                     outputStream.write(codes.get(i).getCodeLength());
+
+                outputStream.write(44);
             }
 
             //read from input file character by character
