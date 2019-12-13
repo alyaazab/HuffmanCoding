@@ -95,6 +95,13 @@ public class FileUtils {
             File compressedFile = new File("compressed.txt");
             OutputStream outputStream = new FileOutputStream(compressedFile);
 
+            for(int i=0; i<128; i++)
+            {
+                if(codes.get(i) == null)
+                    outputStream.write(0);
+                else
+                    outputStream.write(codes.get(i).getCodeLength());
+            }
 
             //read from input file character by character
             while((c = bufferedReader.read()) != -1)
@@ -139,6 +146,13 @@ public class FileUtils {
             e.printStackTrace();
         }
     }
+
+
+    public static void writeFileHeader() {
+
+
+    }
+
 
 
     public static void decompressFile(String filename) {
