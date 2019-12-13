@@ -1,20 +1,21 @@
 package com.company;
 
 import java.io.*;
-import java.util.Comparator;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.PriorityQueue;
+import java.nio.Buffer;
+import java.util.*;
 
 public class FileUtils {
 
     static String code = "";
     static Node root;
 
+    //holds huffman code of all characters from input file
+    static String fileCode = "";
+
     //create a hashmap that stores each character's ascii code and its frequency in the file
     static HashMap<Integer, Integer> frequency = new HashMap<>();
 
-    static HashMap<Character, String> codes = new HashMap<>();
+    static HashMap<Integer, String> codes = new HashMap<>();
 
     //create a priority queue that stores all hashmap entries, ordered in ascending frequency order
 //    static PriorityQueue<HashMap.Entry<Integer, Integer>> priorityQueue = new PriorityQueue<>(Comparator.comparingInt(Map.Entry::getValue));
@@ -52,6 +53,9 @@ public class FileUtils {
         //create the huffman tree and print it
         Node root = createHuffmanTree();
         printTree(root);
+        traverseInOrder(root);
+        compressFile(filename);
+        decompressFile("compressed.txt");
     }
 
     public static Node createHuffmanTree() {
@@ -75,20 +79,115 @@ public class FileUtils {
         return priorityQueue.poll();
     }
 
-    public static void traverseInorder (Node rootNode){
+    public static void compressFile(String filename) {
+
+        String compressionCode = "";
+        int c;
+        String currentByte;
+        byte outputByte;
+
+        try {
+            File inputFile = new File(filename);
+            FileReader fileReader = new FileReader(inputFile);
+            BufferedReader bufferedReader = new BufferedReader(fileReader);
+
+
+            File compressedFile = new File("compressed.txt");
+            OutputStream outputStream = new FileOutputStream(compressedFile);
+
+
+            //read from input file character by character
+            while((c = bufferedReader.read()) != -1)
+            {
+                //for testing purposes: holds entire code to be written to file
+                compressionCode = compressionCode + codes.get(c);
+
+                //concatenate current code to fileCode
+                fileCode+= codes.get(c);
+
+                //if we have reached a length of 7
+                if(fileCode.length()>=7)
+                {
+                    //extract the first 7 bits and add a 0 at the beginning
+                    currentByte = "0" + fileCode.substring(0,7);
+                    System.out.println(currentByte);
+
+                    //convert string code to a byte
+                    outputByte = Byte.parseByte(currentByte, 2);
+                    System.out.println(outputByte);
+
+                    //write this byte to output file
+                    outputStream.write(outputByte);
+
+                    //delete the first 7 bits from fileCode
+                    fileCode = fileCode.substring(7);
+                }
+            }
+
+            //if there are any remaining bits, write them to file
+            if(fileCode.length()>0)
+            {
+                outputByte = Byte.parseByte(fileCode, 2);
+                System.out.println(outputByte);
+                outputStream.write(outputByte);
+            }
+            outputStream.close();
+
+            System.out.println(compressionCode);
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+
+    public static void decompressFile(String filename) {
+
+        //holds all bits from input file
+        String decompressionCode = "";
+        String currentByte;
+
+        try {
+            File inputFile = new File(filename);
+            FileReader fileReader = new FileReader(inputFile);
+            BufferedReader bufferedReader = new BufferedReader(fileReader);
+
+            System.out.println("Decompressing...");
+
+            int c;
+            while((c=bufferedReader.read()) != -1)
+            {
+                //print ascii value of this byte
+                System.out.println(c);
+                //get the least significant 7 bits of this byte
+                currentByte = String.format("%7s", Integer.toBinaryString(c)).replace(' ', '0');
+                System.out.println(currentByte);
+                //add these 7 bits to our code string
+                decompressionCode = decompressionCode + currentByte;
+            }
+
+            System.out.println(decompressionCode);
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+
+    }
+    public static void traverseInOrder (Node rootNode){
         if(rootNode.getLeft() == null && rootNode.getRight() == null){
             System.out.println((char)rootNode.character + ": " + code);
-            codes.put((char)rootNode.character, code);
-            System.out.println("hm: "+ codes.get((char)rootNode.character));
+            codes.put(rootNode.character, code);
+            System.out.println("hm: "+ codes.get(rootNode.character));
 
         }
         else{
             code+="0";
-            traverseInorder(rootNode.getLeft());
+            traverseInOrder(rootNode.getLeft());
             code = code.substring(0,code.length()-1);
             code+="1";
             //visit
-            traverseInorder(rootNode.getRight());
+            traverseInOrder(rootNode.getRight());
             code = code.substring(0,code.length()-1);
         }
     }

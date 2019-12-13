@@ -8,7 +8,7 @@ public class Main {
 
         FileUtils.calculateFrequencies("test.txt");
         System.out.println("----");
-        FileUtils.traverseInorder(FileUtils.root);
+//        FileUtils.traverseInOrder(FileUtils.root);
     }
 
 
