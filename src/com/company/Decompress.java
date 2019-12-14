@@ -17,6 +17,11 @@ public class Decompress {
             File file = new File(filename);
             Scanner scanner = new Scanner(file);
 
+            File decompressedFile = new File("decompressed_file.txt");
+            FileWriter fileWriter = new FileWriter(decompressedFile);
+            BufferedWriter bufferedWriter = new BufferedWriter(fileWriter);
+
+
             int n = scanner.nextInt();
             System.out.println("n: " + n);
             scanner.nextLine();
@@ -73,18 +78,16 @@ public class Decompress {
                 if(tempNode.right==null && tempNode.left==null)
                 {
                     System.out.print((char)tempNode.character);
+                    bufferedWriter.append((char)tempNode.character);
                     tempNode = root;
                 }
             }
 
+            bufferedWriter.close();
 
-        } catch (FileNotFoundException e) {
+        } catch (Exception e) {
             e.printStackTrace();
         }
-
-
-
-
 
 
     }
