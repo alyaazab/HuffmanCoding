@@ -20,9 +20,9 @@ public class Compress {
 
 
     //this method takes in a filename as input and compresses the file
-    public static void compressFile(String filename) {
+    public static void compressFile(String sourceFilename, String destFilename) {
         //calculate frequency of each character in input file and add it to hashmap
-        populateFrequencyHashmap(filename);
+        populateFrequencyHashmap(sourceFilename);
 
         //add all nodes into priority queue
         populatePriorityQueue();
@@ -31,7 +31,7 @@ public class Compress {
         root = createHuffmanTree();
         printTree(root);
         traverseInOrder(root);
-        compress(filename);
+        compress(sourceFilename, destFilename);
     }
 
     //this method takes in a file name
@@ -87,15 +87,18 @@ public class Compress {
     }
 
     //this method does the actual compression of the input file
-    public static void compress(String filename) {
+    public static void compress(String sourceFilename, String destFilename) {
 
         String compressionCode = "";
         int c;
         String fileCode = "";
         byte outputByte;
 
-        File inputFile = new File(filename);
-        File compressedFile = new File("compressed.txt");
+        File inputFile = new File(sourceFilename);
+        File compressedFile = new File(destFilename);
+        System.out.println("inside compress");
+        System.out.println("src: " + sourceFilename);
+        System.out.println("dest: " + destFilename);
 
         try {
             FileReader fileReader = new FileReader(inputFile);

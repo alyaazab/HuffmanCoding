@@ -11,12 +11,13 @@ public class Decompress {
     private static HashMap<Integer, String> codes = new HashMap<>();
 
     //this method takes in a filename and decompresses the file
-    public static void decompressFile(String filename) {
+    public static void decompressFile(String sourceFilename, String destFilename) {
         String line;
         String[] tokens;
 
-        File inputFile = new File(filename);
-        File decompressedFile = new File("decompressed_file.txt");
+        File inputFile = new File(sourceFilename);
+        ;
+        File decompressedFile = new File(destFilename);
 
         try {
             Scanner scanner = new Scanner(inputFile);
