@@ -9,7 +9,8 @@ public class Node implements Comparable {
     int character;
 
     public Node(){
-
+        this.right = null;
+        this.left = null;
     }
 
     public Node(int character, int freq) {

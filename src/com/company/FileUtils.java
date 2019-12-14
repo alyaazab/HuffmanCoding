@@ -15,7 +15,7 @@ public class FileUtils {
     //create a hashmap that stores each character's ascii code and its frequency in the file
     static HashMap<Integer, Integer> frequency = new HashMap<>();
 
-    static HashMap<Integer, Value> codes = new HashMap<>();
+    static HashMap<Integer, String> codes = new HashMap<>();
 
     //create a priority queue that stores all hashmap entries, ordered in ascending frequency order
 //    static PriorityQueue<HashMap.Entry<Integer, Integer>> priorityQueue = new PriorityQueue<>(Comparator.comparingInt(Map.Entry::getValue));
@@ -55,7 +55,7 @@ public class FileUtils {
         printTree(root);
         traverseInOrder(root);
         compressFile(filename);
-        decompressFile("compressed.txt");
+//        decompressFile("compressed.txt");
     }
 
     public static Node createHuffmanTree() {
@@ -97,25 +97,39 @@ public class FileUtils {
             FileWriter fileWriter = new FileWriter(compressedFile);
             BufferedWriter bufferedWriter = new BufferedWriter(fileWriter);
 
-            for(int i=0; i<128; i++)
-            {
-                if(codes.get(i) == null)
-                    bufferedWriter.append("0");
-                else
-                    bufferedWriter.append((char)codes.get(i).getCodeLength());
 
-                bufferedWriter.append(",");
-            }
+            //write number of characters in hashmap
+            bufferedWriter.append(codes.size()+"\n");
+
+            codes.forEach((key, value) -> {
+                try {
+                    bufferedWriter.append(key+": ");
+                    bufferedWriter.append(value + "\n");
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+
+            });
+
+//            for(int i=0; i<128; i++)
+//            {
+//                if(codes.get(i) == null)
+//                    bufferedWriter.append("0");
+//                else
+//                    bufferedWriter.append((char)codes.get(i).getCodeLength());
+//
+//                bufferedWriter.append(",");
+//            }
             bufferedWriter.close();
 
             //read from input file character by character
             while((c = bufferedReader.read()) != -1)
             {
                 //for testing purposes: holds entire code to be written to file
-                compressionCode = compressionCode + codes.get(c).getCode();
+                compressionCode = compressionCode + codes.get(c);
 
                 //concatenate current code to fileCode
-                fileCode+= codes.get(c).getCode();
+                fileCode+= codes.get(c);
 
                 //if we have reached a length of 7
                 if(fileCode.length()>=7)
@@ -144,6 +158,7 @@ public class FileUtils {
                 outputStream.write(outputByte);
             }
             outputStream.close();
+            System.out.println("compression code:");
             System.out.println(compressionCode);
 
         } catch (Exception e) {
@@ -204,8 +219,8 @@ public class FileUtils {
     public static void traverseInOrder (Node rootNode){
         if(rootNode.getLeft() == null && rootNode.getRight() == null){
             System.out.println((char)rootNode.character + ": " + code);
-            codes.put(rootNode.character, new Value(rootNode.character, code, code.length()));
-            System.out.println("hm: "+ codes.get(rootNode.character).getCode());
+            codes.put(rootNode.character, code);
+            System.out.println("hm: "+ codes.get(rootNode.character));
 
         }
         else{

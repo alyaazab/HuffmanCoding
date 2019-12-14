@@ -9,6 +9,7 @@ public class Main {
         FileUtils.calculateFrequencies("test.txt");
         System.out.println("----");
 //        FileUtils.traverseInOrder(FileUtils.root);
+        Decompress.decompressFile("compressed.txt");
     }
 
 
