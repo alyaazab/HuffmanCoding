@@ -106,6 +106,7 @@ public class FileUtils {
 
                 bufferedWriter.append(",");
             }
+            bufferedWriter.close();
 
             //read from input file character by character
             while((c = bufferedReader.read()) != -1)
@@ -143,7 +144,6 @@ public class FileUtils {
                 outputStream.write(outputByte);
             }
             outputStream.close();
-            bufferedWriter.close();
             System.out.println(compressionCode);
 
         } catch (Exception e) {
