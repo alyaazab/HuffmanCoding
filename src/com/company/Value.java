@@ -1,9 +1,9 @@
 package com.company;
 
-public class Value {
-    private int character;
+public class Value implements Comparable<Value>{
+    private Integer character;
     private String code;
-    private int codeLength;
+    private Integer codeLength;
 
     public Value(int character, String code, int codeLength) {
         this.character = character;
@@ -33,5 +33,13 @@ public class Value {
 
     public void setCodeLength(int codeLength) {
         this.codeLength = codeLength;
+    }
+
+    @Override
+    public int compareTo(Value o) {
+        if(!this.codeLength.equals(o.codeLength)){
+            return this.codeLength.compareTo(o.codeLength);
+        }
+        return this.character .compareTo(o.character);
     }
 }

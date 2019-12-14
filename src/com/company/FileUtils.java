@@ -156,6 +156,10 @@ public class FileUtils {
     }
 
 
+    public static void generateCodebook(){
+
+    }
+
 
     public static void decompressFile(String filename) {
 
@@ -190,6 +194,11 @@ public class FileUtils {
 
 
     }
+
+
+
+
+
     public static void traverseInOrder (Node rootNode){
         if(rootNode.getLeft() == null && rootNode.getRight() == null){
             System.out.println((char)rootNode.character + ": " + code);
