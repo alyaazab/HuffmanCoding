@@ -93,16 +93,18 @@ public class FileUtils {
 
 
             File compressedFile = new File("compressed.txt");
-            OutputStream outputStream = new FileOutputStream(compressedFile);
+            FileOutputStream outputStream = new FileOutputStream(compressedFile, true);
+            FileWriter fileWriter = new FileWriter(compressedFile);
+            BufferedWriter bufferedWriter = new BufferedWriter(fileWriter);
 
             for(int i=0; i<128; i++)
             {
                 if(codes.get(i) == null)
-                    outputStream.write(0);
+                    bufferedWriter.append("0");
                 else
-                    outputStream.write(codes.get(i).getCodeLength());
+                    bufferedWriter.append((char)codes.get(i).getCodeLength());
 
-                outputStream.write(44);
+                bufferedWriter.append(",");
             }
 
             //read from input file character by character
@@ -141,7 +143,7 @@ public class FileUtils {
                 outputStream.write(outputByte);
             }
             outputStream.close();
-
+            bufferedWriter.close();
             System.out.println(compressionCode);
 
         } catch (Exception e) {
