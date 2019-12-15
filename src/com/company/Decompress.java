@@ -69,6 +69,11 @@ public class Decompress {
 //                    System.out.println("YASSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSS");
 //                }
                 if (tempNode.right == null && tempNode.left == null) {
+                    if(tempNode.character == -1)
+                    {
+                        System.out.println("PSEUDO EOFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF");
+                        break;
+                    }
                     System.out.print((char) tempNode.character);
                     bufferedWriter.append((char) tempNode.character);
                     tempNode = root;

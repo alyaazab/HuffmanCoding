@@ -8,6 +8,7 @@ public class Compress {
 
     static String code = "";
     static Node root;
+    final static int pseudoEOF = -1;
 
     //create a hashmap that stores each character's ascii code and its frequency in the file
     static HashMap<Integer, Integer> frequency = new HashMap<>();
@@ -52,6 +53,7 @@ public class Compress {
                 else
                     frequency.put(c, frequency.get(c)+1);
             }
+            frequency.put(pseudoEOF, 1);
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -130,18 +132,32 @@ public class Compress {
                 fileCode = writeByte(outputStream, fileCode);
             }
 
+            fileCode+= codes.get(-1);
+
+
             //if there are any remaining bits, write them to file
-            if(fileCode.length()>0)
+            while(fileCode.length()>7)
             {
 //                fileCode = String.format("%8s", fileCode);
 //                System.out.println(fileCode);
 //                fileCode = fileCode.replace(' ', '0');
 //                System.out.println(fileCode);
 
-                outputByte = Byte.parseByte(fileCode, 2);
+
+                outputByte = Byte.parseByte("0" + fileCode.substring(0, 7), 2);
                 System.out.println(outputByte);
                 outputStream.write(outputByte);
+                fileCode = fileCode.substring(7);
             }
+
+            if(fileCode.length() > 0)
+            {
+                outputByte = Byte.parseByte("0" + String.format("%-7s", fileCode).replace(' ', '0'), 2);
+                outputStream.write(outputByte);
+
+            }
+
+
             outputStream.close();
 
             System.out.println("compression code:");

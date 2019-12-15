@@ -1,1 +1,4 @@
-this is a piece of texttttf
+Welcoefo CS 106B Shrink-It!
+This program uses the Huffman coding algorithm for compression.
+Any file can be compressed by this method, often with substantial
+savings. Waa iression will faithfully reproduce the original.
