@@ -55,6 +55,13 @@ public class Compress {
         } catch (Exception e) {
             e.printStackTrace();
         }
+
+        System.out.println("frequency of each character: ");
+
+        for(HashMap.Entry entry : frequency.entrySet())
+        {
+            System.out.println(entry.getKey() + ": " + entry.getValue());
+        }
     }
 
     //this method adds a node for each character into the priority queue
@@ -79,7 +86,7 @@ public class Compress {
             y = priorityQueue.poll();
             node.left = x;
             node.right = y;
-            System.out.println(i +"\t" + (char)x.character +": " + x.freq + "\t" + (char)y.character +": " + y.freq);
+            System.out.println((char)x.character +": " + x.freq + "\t" + (char)y.character +": " + y.freq);
             node.freq = x.freq + y.freq;
             priorityQueue.add(node);
         }
@@ -126,6 +133,11 @@ public class Compress {
             //if there are any remaining bits, write them to file
             if(fileCode.length()>0)
             {
+//                fileCode = String.format("%8s", fileCode);
+//                System.out.println(fileCode);
+//                fileCode = fileCode.replace(' ', '0');
+//                System.out.println(fileCode);
+
                 outputByte = Byte.parseByte(fileCode, 2);
                 System.out.println(outputByte);
                 outputStream.write(outputByte);
@@ -173,11 +185,14 @@ public class Compress {
             //write to compressed file the number of character in our hashmap
             bufferedWriter.append(String.valueOf(codes.size())).append("\n");
 
+            System.out.println("code for each character");
             //write down each character and its code into the compressed file
             codes.forEach((key, value) -> {
                 try {
                     bufferedWriter.append(String.valueOf(key)).append(": ");
                     bufferedWriter.append(value).append("\n");
+                    System.out.print(key +": ");
+                    System.out.println(value);
                 } catch (IOException e) {
                     e.printStackTrace();
                 }
@@ -196,7 +211,7 @@ public class Compress {
         if(rootNode.getLeft() == null && rootNode.getRight() == null){
             System.out.println((char)rootNode.character + ": " + code);
             codes.put(rootNode.character, code);
-            System.out.println("hm: "+ codes.get(rootNode.character));
+//            System.out.println("hm: "+ codes.get(rootNode.character));
         }
         else{
             code+="0";

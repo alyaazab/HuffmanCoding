@@ -16,7 +16,6 @@ public class Decompress {
         String[] tokens;
 
         File inputFile = new File(sourceFilename);
-        ;
         File decompressedFile = new File(destFilename);
 
         try {
@@ -36,6 +35,7 @@ public class Decompress {
                 tokens = line.split(": ");
 
                 codes.put(Integer.parseInt(tokens[0]), tokens[1]);
+                System.out.println((char) Integer.parseInt(tokens[0]) + ": " + tokens[1]);
             }
 
             //build the huffman tree
@@ -52,7 +52,6 @@ public class Decompress {
         }
     }
 
-    //this method does the actual decompression
     private static void decompress(BufferedWriter bufferedWriter, String compressedFileBinary) {
         //go through the code and decompress
         Node tempNode = root;
@@ -65,6 +64,10 @@ public class Decompress {
                     tempNode = tempNode.right;
                 }
 
+//                if(i==compressedFileBinary.length()-1 && (tempNode.right!=null || tempNode.left!=null))
+//                {
+//                    System.out.println("YASSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSS");
+//                }
                 if (tempNode.right == null && tempNode.left == null) {
                     System.out.print((char) tempNode.character);
                     bufferedWriter.append((char) tempNode.character);
@@ -79,6 +82,7 @@ public class Decompress {
 
     }
 
+
     //helper method that reads compressed file contents and converts them to a binary string
     private static String readCompressedFileContents(Scanner scanner) {
         //holds compressed content
@@ -86,11 +90,11 @@ public class Decompress {
 
         while(scanner.hasNext())
         {
-            compressedFileText = scanner.next();
-            System.out.println(compressedFileText);
+            compressedFileText += scanner.nextLine();
+//            System.out.print(compressedFileText);
         }
 
-        System.out.println(compressedFileText.length());
+        System.out.println(compressedFileText);
 
         //holds compressed content as binary string
         String compressedFileBinary ="";
@@ -99,6 +103,7 @@ public class Decompress {
         for(int i=0; i<compressedFileText.length(); i++)
             compressedFileBinary += String.format("%7s", Integer.toBinaryString(compressedFileText.charAt(i))).replace(' ', '0');
 
+        System.out.println();
         System.out.println(compressedFileBinary);
 
         return compressedFileBinary;
@@ -117,6 +122,12 @@ public class Decompress {
             value = entry.getValue().toString();
             tempNode = root;
 
+            if(tempNode.right == null)
+                System.out.println("roots right is null");
+
+            if(tempNode.left == null)
+                System.out.println("roots left is null");
+
             //for each bit of the character's huffman code
             for(int i=0; i<value.length(); i++)
             {
@@ -125,15 +136,22 @@ public class Decompress {
                 {
                     //if there is no left node, create one
                     if(tempNode.left == null)
+                    {
                         tempNode.left = new Node();
+                        System.out.println("my left is null, creating new left");
+                    }
+                    System.out.println("going left");
                     tempNode = tempNode.left;
 
                 }
-                else
-                {
+                else {
                     //if there is no right node, create one
-                    if(tempNode.right == null)
-                        tempNode.right = new Node();
+                    if (tempNode.right == null)
+                    {
+                        System.out.println("my right is null, creating new right");
+                    tempNode.right = new Node();
+                    }
+                    System.out.println("going right");
                     tempNode = tempNode.right;
                 }
 
@@ -141,7 +159,10 @@ public class Decompress {
                 if(i == value.length()-1)
                 {
                     tempNode.character = (int) entry.getKey();
-                    System.out.println("char: "+tempNode.character);
+                    System.out.println("LEAFF");
+                    System.out.println("char: "+(char)tempNode.character);
+                    System.out.println();
+                    System.out.println();
                 }
             }
         }
