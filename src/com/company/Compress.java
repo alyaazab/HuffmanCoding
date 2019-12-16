@@ -1,14 +1,15 @@
 package com.company;
 
 import java.io.*;
-import java.nio.Buffer;
-import java.util.*;
+import java.util.HashMap;
+import java.util.PriorityQueue;
 
 public class Compress {
 
     static String code = "";
     static Node root;
     final static int pseudoEOF = -1;
+    static String compressionCode = "";
 
     //create a hashmap that stores each character's ascii code and its frequency in the file
     static HashMap<Integer, Integer> frequency = new HashMap<>();
@@ -48,6 +49,8 @@ public class Compress {
             //read from file character by character, incrementing each character's frequency when it is encountered
             while((c = bufferedReader.read()) != -1)
             {
+                System.out.println((char)c);
+
                 if(frequency.get(c) == null)
                     frequency.put(c, 1);
                 else
@@ -97,17 +100,10 @@ public class Compress {
 
     //this method does the actual compression of the input file
     public static void compress(String sourceFilename, String destFilename) {
-
-        String compressionCode = "";
         int c;
-        String fileCode = "";
-        byte outputByte;
 
         File inputFile = new File(sourceFilename);
         File compressedFile = new File(destFilename);
-        System.out.println("inside compress");
-        System.out.println("src: " + sourceFilename);
-        System.out.println("dest: " + destFilename);
 
         try {
             FileReader fileReader = new FileReader(inputFile);
@@ -119,81 +115,74 @@ public class Compress {
 
             writeFileHeader(bufferedWriter);
 
-            //read from input file character by character
-            while((c = bufferedReader.read()) != -1)
-            {
-                //for testing purposes: holds entire code to be written to file
+            while ((c = bufferedReader.read()) != -1) {
                 compressionCode = compressionCode + codes.get(c);
-
-                //concatenate current code to fileCode
-                fileCode = fileCode + codes.get(c);
-
-                //write a byte to compressed file
-                fileCode = writeByte(outputStream, fileCode);
             }
 
-            fileCode+= codes.get(-1);
+            compressionCode += codes.get(-1);
 
-
-            //if there are any remaining bits, write them to file
-            while(fileCode.length()>7)
+            for(int i=1; i<=compressionCode.length(); i++)
             {
-//                fileCode = String.format("%8s", fileCode);
-//                System.out.println(fileCode);
-//                fileCode = fileCode.replace(' ', '0');
-//                System.out.println(fileCode);
-
-
-                outputByte = Byte.parseByte("0" + fileCode.substring(0, 7), 2);
-                System.out.println(outputByte);
-                outputStream.write(outputByte);
-                fileCode = fileCode.substring(7);
+                System.out.print(compressionCode.charAt(i-1));
+                if(i%7==0)
+                    System.out.println();
             }
 
-            if(fileCode.length() > 0)
+            System.out.println("compression code new");
+            System.out.println(compressionCode);
+
+            String bits = "";
+            String currentByte = "";
+            byte ascii;
+            int j=0;
+
+            for(int i=1; i<=compressionCode.length(); i++)
             {
-                outputByte = Byte.parseByte("0" + String.format("%-7s", fileCode).replace(' ', '0'), 2);
-                outputStream.write(outputByte);
-
+                bits+=compressionCode.charAt(i-1);
+                if(i%7==0)
+                {
+                    j=i;
+                    currentByte = "0" + bits;
+                    ascii = convertBitsToASCII(currentByte);
+                    outputStream.write(ascii);
+                    bits = "";
+                }
             }
 
+            String leftoverBits = compressionCode.substring(j);
+
+
+            System.out.println("LEFTOVER BITS");
+            System.out.println(leftoverBits);
+
+            currentByte = "0" + leftoverBits;
+            currentByte = String.format("%-8s", currentByte).replace(' ', '0');
+            ascii = convertBitsToASCII(currentByte);
+            outputStream.write(ascii);
 
             outputStream.close();
 
-            System.out.println("compression code:");
-            System.out.println(compressionCode);
-
-        } catch (Exception e) {
+        }catch(Exception e){
             e.printStackTrace();
         }
     }
 
-    private static String writeByte(FileOutputStream outputStream, String fileCode) {
-        String currentByte;
-        byte outputByte;
+    private static byte convertBitsToASCII(String currentByte) {
 
-        //if we have reached a length of 7
-        if(fileCode.length()>=7)
+        byte ascii = 0;
+        for(int i=0; i<currentByte.length(); i++)
         {
-            //extract the first 7 bits and add a 0 at the beginning
-            currentByte = "0" + fileCode.substring(0,7);
+            if(currentByte.charAt(i)=='1')
+                ascii += 1 * Math.pow(2, 7-i);
 
-            //convert string code to a byte
-            outputByte = Byte.parseByte(currentByte, 2);
-
-            //write this byte to output file
-            try {
-                outputStream.write(outputByte);
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-
-            //delete the first 7 bits from fileCode
-            fileCode = fileCode.substring(7);
         }
 
-        return fileCode;
+        System.out.println("ascii character:");
+        System.out.println(ascii);
+        return ascii;
+
     }
+
 
     //writes our code table to the beginning of our compressed file
     private static void writeFileHeader(BufferedWriter bufferedWriter) {

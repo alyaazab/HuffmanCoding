@@ -2,7 +2,6 @@ package com.company;
 
 import javax.swing.*;
 import java.io.File;
-import java.io.IOException;
 import java.util.Scanner;
 
 public class Main {
@@ -14,6 +13,9 @@ public class Main {
 
         Compress.compressFile("test.txt", "compressed.txt");
         Decompress.decompressFile("compressed.txt", "decompressed.txt");
+
+        System.out.println("comp");
+        System.out.println(Compress.compressionCode);
     }
 
     private static void menu() {
@@ -61,6 +63,7 @@ public class Main {
                     }
 
                     break;
+
                 case "2":
                     //open file chooser
                     //get text file name
@@ -86,6 +89,7 @@ public class Main {
                     }
 
                     break;
+
                 default:
                     menu();
             }
@@ -100,16 +104,8 @@ public class Main {
 
         if (result == JFileChooser.APPROVE_OPTION) {
             // user selects a file
-            File selectedFile = jFileChooser.getSelectedFile();
-
-
-//            System.out.println(selectedFile.getParent());
-//            System.out.println("Selected file: " + selectedFile.getAbsolutePath());
-            return selectedFile;
+            return jFileChooser.getSelectedFile();
         }
         return null;
-
     }
-
-
 }
