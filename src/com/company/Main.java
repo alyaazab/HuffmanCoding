@@ -2,6 +2,8 @@ package com.company;
 
 import javax.swing.*;
 import java.io.File;
+import java.util.ArrayList;
+import java.util.Objects;
 import java.util.Scanner;
 
 public class Main {
@@ -10,12 +12,37 @@ public class Main {
 
 //        menu();
 
+        ArrayList<String> fileNames = new ArrayList<>();
+        listFileForFolder(new File("mycats"), fileNames);
 
-        Compress.compressFile("test.txt", "compressed.txt");
-        Decompress.decompressFile("compressed.txt", "decompressed.txt");
+        System.out.println(fileNames);
+
+
+        ArrayList<String> destFilenames = new ArrayList<>();
+        destFilenames.add("dbrownie.txt");
+        destFilenames.add("dginger.txt");
+        destFilenames.add("dpuppy.txt");
+
+
+        Compress.compressFile(fileNames, "compressed.txt");
+        Decompress.decompressFile("compressed.txt", destFilenames);
 
         System.out.println("comp");
         System.out.println(Compress.compressionCode);
+    }
+
+    public static void listFileForFolder(final File folder, ArrayList<String> fileNames) {
+        for(final File fileEntry : Objects.requireNonNull(folder.listFiles())) {
+            if(fileEntry.isDirectory())
+            {
+                listFileForFolder(fileEntry, fileNames);
+            }
+            else
+            {
+                fileNames.add(fileEntry.getAbsolutePath());
+                System.out.println(fileEntry.getName());
+            }
+        }
     }
 
     private static void menu() {
@@ -58,7 +85,7 @@ public class Main {
                         destFilename = sourceFile.getParent() + "/" + "comp_" + tokens[length-1];
                         System.out.println(destFilename);
 
-                        Compress.compressFile(sourceFilename, destFilename);
+//                        Compress.compressFile(sourceFilename, destFilename);
 
                     }
 
@@ -84,7 +111,7 @@ public class Main {
                         destFilename = sourceFilename.replace("comp_", "");
                         System.out.println(destFilename);
 
-                        Decompress.decompressFile(sourceFilename, destFilename);
+//                        Decompress.decompressFile(sourceFilename, destFilename);
 
                     }
 

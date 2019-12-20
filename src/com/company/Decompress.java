@@ -1,6 +1,8 @@
 package com.company;
 
 import java.io.*;
+import java.nio.Buffer;
+import java.util.ArrayList;
 import java.util.HashMap;
 
 public class Decompress {
@@ -10,24 +12,22 @@ public class Decompress {
     private static HashMap<Integer, String> codes = new HashMap<>();
 
     //this method takes in a filename and decompresses the file
-    public static void decompressFile(String sourceFilename, String destFilename) {
+    public static void decompressFile(String sourceFilename, ArrayList<String> destFilename) {
         String line;
         String[] tokens;
 
         File inputFile = new File(sourceFilename);
-        File decompressedFile = new File(destFilename);
-
 
         try {
             FileReader fileReader = new FileReader(inputFile);
             BufferedReader bufferedReader = new BufferedReader(fileReader);
 
-            FileWriter fileWriter = new FileWriter(decompressedFile);
-            BufferedWriter bufferedWriter = new BufferedWriter(fileWriter);
-
             //read in the number of entries of the huffman table
             int n = Integer.parseInt(bufferedReader.readLine());
+            System.out.println("n = " + n);
 
+            if(n==1)
+                return;
             //read in each entry of the huffman table and add the character and its code into a hashmap
             for(int i=0; i<n; i++)
             {
@@ -35,7 +35,6 @@ public class Decompress {
                 tokens = line.split(": ");
 
                 codes.put(Integer.parseInt(tokens[0]), tokens[1]);
-//                System.out.println((char) Integer.parseInt(tokens[0]) + ": " + tokens[1]);
             }
 
             //build the huffman tree
@@ -45,18 +44,23 @@ public class Decompress {
             String compressedFileBinary = readCompressedFileContents(bufferedReader);
 
             //decompress the file contents
-            decompress(bufferedWriter, compressedFileBinary);
+            decompress(destFilename, compressedFileBinary);
 
+            bufferedReader.close();
         } catch (Exception e) {
             e.printStackTrace();
         }
     }
 
-    private static void decompress(BufferedWriter bufferedWriter, String compressedFileBinary) {
-        //go through the code and decompress
+    private static void decompress(ArrayList<String> destFilename, String compressedFileBinary) {
         Node tempNode = root;
 
+        int j = 0;
+
         try {
+            FileWriter fileWriter = new FileWriter(new File(destFilename.get(0)));
+            BufferedWriter bufferedWriter = new BufferedWriter(fileWriter);
+
             for (int i = 0; i < compressedFileBinary.length(); i++) {
                 if (compressedFileBinary.charAt(i) == '0') {
                     tempNode = tempNode.left;
@@ -67,15 +71,24 @@ public class Decompress {
                 if (tempNode.right == null && tempNode.left == null) {
                     if(tempNode.character == -1)
                     {
-                        break;
+                        j++;
+                        System.out.println("NEW CAT");
+
+                        if(j==destFilename.size()) break;
+                        bufferedWriter.close();
+                        fileWriter = new FileWriter(new File(destFilename.get(j)));
+//                        System.out.println("NEW CAT");
+                        bufferedWriter = new BufferedWriter(fileWriter);
+                        tempNode = root;
+                        continue;
                     }
-//                    System.out.print((char) tempNode.character);
                     bufferedWriter.append((char) tempNode.character);
                     tempNode = root;
                 }
             }
-
             bufferedWriter.close();
+
+
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -88,11 +101,20 @@ public class Decompress {
         int c;
 
         String compressedFileBinary = "";
+        System.out.println("CHECK THIS");
         try {
             while ((c = bufferedReader.read()) != -1)
             {
-                //convert bits to ascii
-                compressedFileBinary += String.format("%7s", Integer.toBinaryString(c)).replace(' ', '0');
+                System.out.println("TESTINGG");
+                char x = (char) c;
+                System.out.println(x);
+                System.out.println(Integer.toBinaryString(x));
+                System.out.println(c);
+                System.out.println((char)c);
+                System.out.println(Integer.valueOf((char)c));
+
+                compressedFileBinary += String.format("%8s", Integer.toBinaryString(c)).replace(' ', '0');
+                System.out.println(Integer.toBinaryString(c));
             }
 
 

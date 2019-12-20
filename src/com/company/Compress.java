@@ -1,6 +1,7 @@
 package com.company;
 
 import java.io.*;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.PriorityQueue;
 
@@ -22,9 +23,20 @@ public class Compress {
 
 
     //this method takes in a filename as input and compresses the file
-    public static void compressFile(String sourceFilename, String destFilename) {
+    public static void compressFile(ArrayList<String> sourceFilenames, String destFilename) {
+
+        ArrayList<File> sourceFiles = new ArrayList<>();
+
+        for(int i=0; i<sourceFilenames.size(); i++)
+        {
+            sourceFiles.add(new File(sourceFilenames.get(i)));
+
+        }
+//        File sourceFile = new File(sourceFilename);
+        File destFile = new File(destFilename);
+
         //calculate frequency of each character in input file and add it to hashmap
-        populateFrequencyHashmap(sourceFilename);
+        populateFrequencyHashmap(sourceFiles);
 
         //add all nodes into priority queue
         populatePriorityQueue();
@@ -33,30 +45,52 @@ public class Compress {
         root = createHuffmanTree();
         printTree(root);
         traverseInOrder(root);
-        compress(sourceFilename, destFilename);
+
+        //compress the file
+        compress(sourceFiles, destFile);
+
+//        if(sourceFile.length() < destFile.length())
+//        {
+//            System.out.println("Compression using Huffman encoding will result in a larger file.");
+//        }
+
+
+
     }
 
     //this method takes in a file name
     //reads the file character by character and populates the frequency hashmap and the priority queue
-    public static void populateFrequencyHashmap(String filename) {
-        try {
-            File file = new File(filename);
-            FileReader fileReader = new FileReader(file);
-            BufferedReader bufferedReader = new BufferedReader(fileReader);
+    public static void populateFrequencyHashmap(ArrayList<File> sourceFiles) {
+        try{
 
-            int c;
+            FileReader fileReader = null;
+            BufferedReader bufferedReader;
+            frequency.put(pseudoEOF, 0);
 
-            //read from file character by character, incrementing each character's frequency when it is encountered
-            while((c = bufferedReader.read()) != -1)
+            for(int i=0; i<sourceFiles.size(); i++)
             {
-                System.out.println((char)c);
+                fileReader = new FileReader(sourceFiles.get(i));
+                bufferedReader = new BufferedReader(fileReader);
 
-                if(frequency.get(c) == null)
-                    frequency.put(c, 1);
-                else
-                    frequency.put(c, frequency.get(c)+1);
+                int c;
+
+                //read from file character by character, incrementing each character's frequency when it is encountered
+                while((c = bufferedReader.read()) != -1)
+                {
+                    System.out.println((char)c);
+
+                    if(frequency.get(c) == null)
+                        frequency.put(c, 1);
+                    else
+                        frequency.put(c, frequency.get(c)+1);
+                }
+
+                frequency.put(pseudoEOF, frequency.get(-1)+1);
+
+                bufferedReader.close();
+
             }
-            frequency.put(pseudoEOF, 1);
+
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -99,77 +133,71 @@ public class Compress {
     }
 
     //this method does the actual compression of the input file
-    public static void compress(String sourceFilename, String destFilename) {
+    public static void compress(ArrayList<File> inputFile, File compressedFile) {
         int c;
 
-        File inputFile = new File(sourceFilename);
-        File compressedFile = new File(destFilename);
-
         try {
-            FileReader fileReader = new FileReader(inputFile);
-            BufferedReader bufferedReader = new BufferedReader(fileReader);
 
-            FileOutputStream outputStream = new FileOutputStream(compressedFile, true);
             FileWriter fileWriter = new FileWriter(compressedFile);
             BufferedWriter bufferedWriter = new BufferedWriter(fileWriter);
 
+            //write huffman table to file header
             writeFileHeader(bufferedWriter);
 
-            while ((c = bufferedReader.read()) != -1) {
-                compressionCode = compressionCode + codes.get(c);
+            for(int i = 0; i < inputFile.size(); i++) {
+                FileReader fileReader = new FileReader(inputFile.get(i));
+                BufferedReader bufferedReader = new BufferedReader(fileReader);
+
+                //read from input file and save the binary string into compressionCode
+                while ((c = bufferedReader.read()) != -1) {
+                    compressionCode = compressionCode + codes.get(c);
+                }
+
+                //add the pseudo-eof's binary equivalent
+                compressionCode += codes.get(-1);
+
             }
 
-            compressionCode += codes.get(-1);
-
-            for(int i=1; i<=compressionCode.length(); i++)
-            {
-                System.out.print(compressionCode.charAt(i-1));
-                if(i%7==0)
-                    System.out.println();
-            }
-
-            System.out.println("compression code new");
+            System.out.println("Compression Code: ");
             System.out.println(compressionCode);
 
             String bits = "";
-            String currentByte = "";
-            byte ascii;
+            String currentByte;
+            int character;
             int j=0;
 
+            //convert every 8 bits to their decimal equivalent and write to compressed file
             for(int i=1; i<=compressionCode.length(); i++)
             {
                 bits+=compressionCode.charAt(i-1);
-                if(i%7==0)
+                if(i%8==0)
                 {
                     j=i;
-                    currentByte = "0" + bits;
-                    ascii = convertBitsToASCII(currentByte);
-                    outputStream.write(ascii);
+                    System.out.println("bits: " + bits);
+                    character = convertBitsToDecimal(bits);
+                    bufferedWriter.append((char)character);
                     bits = "";
                 }
             }
 
+            //right pad the leftover bits with 0
             String leftoverBits = compressionCode.substring(j);
+            currentByte = String.format("%-8s", leftoverBits).replace(' ', '0');
 
+            //convert to decimal equivalent and write to compressed file
+            character = convertBitsToDecimal(currentByte);
+            bufferedWriter.append((char)character);
 
-            System.out.println("LEFTOVER BITS");
-            System.out.println(leftoverBits);
-
-            currentByte = "0" + leftoverBits;
-            currentByte = String.format("%-8s", currentByte).replace(' ', '0');
-            ascii = convertBitsToASCII(currentByte);
-            outputStream.write(ascii);
-
-            outputStream.close();
+            bufferedWriter.close();
 
         }catch(Exception e){
             e.printStackTrace();
         }
     }
 
-    private static byte convertBitsToASCII(String currentByte) {
+    private static int convertBitsToDecimal(String currentByte) {
 
-        byte ascii = 0;
+        int ascii = 0;
         for(int i=0; i<currentByte.length(); i++)
         {
             if(currentByte.charAt(i)=='1')
@@ -177,8 +205,6 @@ public class Compress {
 
         }
 
-        System.out.println("ascii character:");
-        System.out.println(ascii);
         return ascii;
 
     }
@@ -203,7 +229,6 @@ public class Compress {
                 }
             });
 
-            bufferedWriter.close();
         } catch (IOException e) {
             e.printStackTrace();
         }

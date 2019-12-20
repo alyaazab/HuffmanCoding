@@ -1,3 +1,4 @@
-Welcome to CS 106B Shrink-It! This program uses the Huffman coding algorithm for compression.
-Any file can be compressed by this method, often with substantial savings.
-Decompression will faithfully reproduce the original.
+abcd
+ahmed
+khaled akakak hi
+byeeee
