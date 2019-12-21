@@ -21,6 +21,8 @@ public class Compress {
     //create a priority queue that stores all nodes sorted in ascending frequency order
     static PriorityQueue<Node> priorityQueue = new PriorityQueue<>();
 
+    static int nOfFiles;
+
 
     //this method takes in a filename as input and compresses the file
     public static void compressFile(ArrayList<String> sourceFilenames, String destFilename) {
@@ -215,6 +217,7 @@ public class Compress {
         try {
             //write to compressed file the number of character in our hashmap
             bufferedWriter.append(String.valueOf(codes.size())).append("\n");
+            bufferedWriter.append(String.valueOf(nOfFiles)).append("\n");
 
             System.out.println("code for each character");
             //write down each character and its code into the compressed file

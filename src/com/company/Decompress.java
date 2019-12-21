@@ -10,6 +10,7 @@ public class Decompress {
     static String decompressionCode = "";
     private static Node root = new Node();
     private static HashMap<Integer, String> codes = new HashMap<>();
+    static int nOfFiles;
 
     //this method takes in a filename and decompresses the file
     public static void decompressFile(String sourceFilename, ArrayList<String> destFilename) {
@@ -28,6 +29,8 @@ public class Decompress {
 
             if(n==1)
                 return;
+
+            nOfFiles = Integer.parseInt(bufferedReader.readLine());
             //read in each entry of the huffman table and add the character and its code into a hashmap
             for(int i=0; i<n; i++)
             {
@@ -85,6 +88,8 @@ public class Decompress {
                         System.out.println("NEW CAT");
 
                        // if(j==destFilename.size()) break;
+                        System.out.println("i: " + i);
+                        if(j==nOfFiles) break;
                         bufferedWriter.close();
                         fileWriter = new FileWriter(new File(file.getAbsolutePath()+"/decomp_"+j));
 //                        System.out.println("NEW CAT");

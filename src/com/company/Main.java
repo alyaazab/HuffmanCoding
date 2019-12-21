@@ -99,6 +99,7 @@ public class Main {
                         System.out.println(destFilename);
                         System.out.println("folder size: " + filenames.size());
 
+                        Compress.nOfFiles=filenames.size();
                         Compress.compressFile(filenames, destFilename);
                     }
 
