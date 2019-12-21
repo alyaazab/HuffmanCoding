@@ -1,8 +1,11 @@
 package com.company;
 
 import javax.swing.*;
+import javax.xml.crypto.Data;
 import java.io.File;
+import java.sql.Timestamp;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.Objects;
 import java.util.Scanner;
 
@@ -121,8 +124,12 @@ public class Main {
 
                         if (tokens[0].equals("compfolder")){
                             String parent = sourceFile.getParent();
-                            File file = new File(parent + "/" + tokens[1] + "1");
+
+                            Timestamp ts = new Timestamp(new Date().getTime());
+
+                            File file = new File(parent + "/" + tokens[1]+ts);
                             System.out.println(file.getAbsolutePath());
+
                             if(file.mkdir()){
                                 System.out.println("directory created successfully");
                             }else {
