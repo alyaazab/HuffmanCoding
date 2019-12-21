@@ -21,10 +21,10 @@ public class Main {
         //System.out.println(fileNames);
 
 
-        ArrayList<String> destFilenames = new ArrayList<>();
+        /*ArrayList<String> destFilenames = new ArrayList<>();
         destFilenames.add("dbrownie.txt");
         destFilenames.add("dginger.txt");
-        destFilenames.add("dpuppy.txt");
+        destFilenames.add("dpuppy.txt");*/
 
 
         //Compress.compressFile(fileNames, "compressed.txt");
@@ -85,7 +85,7 @@ public class Main {
 
                         String[] tokens = sourceFilename.split( "/");
                         int length = tokens.length;
-                        destFilename = sourceFile.getParent() + "/compfile_" + tokens[length-1];
+                        long fileLength=1;
 
 
                         ArrayList<String> filenames = new ArrayList<>();
@@ -93,6 +93,8 @@ public class Main {
                             listFileForFolder(sourceFile,filenames);
                             destFilename = sourceFile.getParent() + "/compfolder_" + tokens[length-1];
                         } else {
+                            destFilename = sourceFile.getParent() + "/compfile_" + tokens[length-1];
+                            fileLength=sourceFile.length();
                             filenames.add(sourceFilename);
                         }
 
@@ -101,6 +103,9 @@ public class Main {
 
                         Compress.nOfFiles=filenames.size();
                         Compress.compressFile(filenames, destFilename);
+                        File file = new File(sourceFile.getParent() + "/compfile_" + tokens[length-1]);
+                        long compLength = file.length();
+                        System.out.println("compression ratio: " + ((double)compLength/fileLength));
                     }
 
                     break;
