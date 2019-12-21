@@ -102,7 +102,13 @@ public class Main {
                         System.out.println("folder size: " + filenames.size());
 
                         Compress.nOfFiles=filenames.size();
+
+                        long startTime = System.currentTimeMillis();
+
                         Compress.compressFile(filenames, destFilename);
+
+                        System.out.println("execution time: " + (System.currentTimeMillis() - startTime));
+
                         File file = new File(sourceFile.getParent() + "/compfile_" + tokens[length-1]);
                         long compLength = file.length();
                         System.out.println("compression ratio: " + ((double)compLength/fileLength));
@@ -155,7 +161,13 @@ public class Main {
                         destFilename = sourceFilename.replace("comp_", "");
                         System.out.println(destFilename);
 */
+
+                        long startTime = System.currentTimeMillis();
+
                         Decompress.decompressFile(sourceFile.getAbsolutePath(), filenames);
+
+                        System.out.println("execution time: " + (System.currentTimeMillis() - startTime));
+
 
                     }
 
