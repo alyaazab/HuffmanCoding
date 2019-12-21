@@ -82,13 +82,13 @@ public class Main {
 
                         String[] tokens = sourceFilename.split( "/");
                         int length = tokens.length;
-                        destFilename = sourceFile.getParent() + "/" + "compfile_" + tokens[length-1];
+                        destFilename = sourceFile.getParent() + "/compfile_" + tokens[length-1];
 
 
                         ArrayList<String> filenames = new ArrayList<>();
                         if(sourceFile.isDirectory()){
                             listFileForFolder(sourceFile,filenames);
-                            destFilename = sourceFile.getParent() + "/" + "compfolder_" + tokens[length-1];
+                            destFilename = sourceFile.getParent() + "/compfolder_" + tokens[length-1];
                         } else {
                             filenames.add(sourceFilename);
                         }
