@@ -58,8 +58,18 @@ public class Decompress {
         int j = 0;
 
         try {
-            FileWriter fileWriter = new FileWriter(new File(destFilename.get(0)));
-            BufferedWriter bufferedWriter = new BufferedWriter(fileWriter);
+            FileWriter fileWriter;
+            BufferedWriter bufferedWriter;
+            File file = new File(destFilename.get(0));
+
+            if(file.isDirectory()){
+                System.out.println("DIR");
+                fileWriter = new FileWriter(new File(file.getAbsolutePath()+"/decomp_"+j));
+            } else {
+                System.out.println("FILE");
+                fileWriter = new FileWriter(file);
+            }
+            bufferedWriter = new BufferedWriter(fileWriter);
 
             for (int i = 0; i < compressedFileBinary.length(); i++) {
                 if (compressedFileBinary.charAt(i) == '0') {
@@ -74,9 +84,9 @@ public class Decompress {
                         j++;
                         System.out.println("NEW CAT");
 
-                        if(j==destFilename.size()) break;
+                       // if(j==destFilename.size()) break;
                         bufferedWriter.close();
-                        fileWriter = new FileWriter(new File(destFilename.get(j)));
+                        fileWriter = new FileWriter(new File(file.getAbsolutePath()+"/decomp_"+j));
 //                        System.out.println("NEW CAT");
                         bufferedWriter = new BufferedWriter(fileWriter);
                         tempNode = root;
