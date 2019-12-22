@@ -1,13 +1,11 @@
 package com.company;
 
 import java.io.*;
-import java.nio.Buffer;
 import java.util.ArrayList;
 import java.util.HashMap;
 
 public class Decompress {
 
-    static String decompressionCode = "";
     private static Node root = new Node();
     private static HashMap<Integer, String> codes = new HashMap<>();
     static int nOfFiles;
@@ -25,7 +23,7 @@ public class Decompress {
 
             //read in the number of entries of the huffman table
             int n = Integer.parseInt(bufferedReader.readLine());
-            System.out.println("n = " + n);
+//            System.out.println("n = " + n);
 
             if(n==1)
                 return;
@@ -66,10 +64,10 @@ public class Decompress {
             File file = new File(destFilename.get(0));
 
             if(file.isDirectory()){
-                System.out.println("DIR");
+//                System.out.println("DIR");
                 fileWriter = new FileWriter(new File(file.getAbsolutePath()+"/decomp_"+j));
             } else {
-                System.out.println("FILE");
+//                System.out.println("FILE");
                 fileWriter = new FileWriter(file);
             }
             bufferedWriter = new BufferedWriter(fileWriter);
@@ -85,10 +83,10 @@ public class Decompress {
                     if(tempNode.character == -1)
                     {
                         j++;
-                        System.out.println("NEW CAT");
+//                        System.out.println("NEW CAT");
 
                        // if(j==destFilename.size()) break;
-                        System.out.println("i: " + i);
+//                        System.out.println("i: " + i);
                         if(j==nOfFiles) break;
                         bufferedWriter.close();
                         fileWriter = new FileWriter(new File(file.getAbsolutePath()+"/decomp_"+j));
@@ -115,21 +113,20 @@ public class Decompress {
     private static String readCompressedFileContents(BufferedReader bufferedReader) {
         int c;
 
-        String compressedFileBinary = "";
-        System.out.println("CHECK THIS");
+        StringBuilder compressedFileBinary = new StringBuilder();
         try {
             while ((c = bufferedReader.read()) != -1)
             {
-                System.out.println("TESTINGG");
+//                System.out.println("TESTINGG");
                 char x = (char) c;
-                System.out.println(x);
-                System.out.println(Integer.toBinaryString(x));
-                System.out.println(c);
-                System.out.println((char)c);
-                System.out.println(Integer.valueOf((char)c));
+//                System.out.println(x);
+//                System.out.println(Integer.toBinaryString(x));
+//                System.out.println(c);
+//                System.out.println((char)c);
+//                System.out.println(Integer.valueOf((char)c));
 
-                compressedFileBinary += String.format("%8s", Integer.toBinaryString(c)).replace(' ', '0');
-                System.out.println(Integer.toBinaryString(c));
+                compressedFileBinary.append(String.format("%8s", Integer.toBinaryString(c)).replace(' ', '0'));
+//                System.out.println(Integer.toBinaryString(c));
             }
 
 
@@ -138,10 +135,10 @@ public class Decompress {
             e.printStackTrace();
         }
 
-        System.out.println("decomppp");
-        System.out.println(compressedFileBinary);
+//        System.out.println("decomppp");
+//        System.out.println(compressedFileBinary);
 
-        return compressedFileBinary;
+        return compressedFileBinary.toString();
 
     }
 

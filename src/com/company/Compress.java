@@ -10,7 +10,7 @@ public class Compress {
     static String code = "";
     static Node root;
     final static int pseudoEOF = -1;
-    static String compressionCode = "";
+    static StringBuilder compressionCode = new StringBuilder();
 
     //create a hashmap that stores each character's ascii code and its frequency in the file
     static HashMap<Integer, Integer> frequency = new HashMap<>();
@@ -45,7 +45,7 @@ public class Compress {
 
         //create the huffman tree and print it
         root = createHuffmanTree();
-        printTree(root);
+//        printTree(root);
         traverseInOrder(root);
 
         //compress the file
@@ -79,7 +79,7 @@ public class Compress {
                 //read from file character by character, incrementing each character's frequency when it is encountered
                 while((c = bufferedReader.read()) != -1)
                 {
-                    System.out.println((char)c);
+//                    System.out.println((char)c);
 
                     if(frequency.get(c) == null)
                         frequency.put(c, 1);
@@ -97,12 +97,12 @@ public class Compress {
             e.printStackTrace();
         }
 
-        System.out.println("frequency of each character: ");
+//        System.out.println("frequency of each character: ");
 
-        for(HashMap.Entry entry : frequency.entrySet())
-        {
-            System.out.println(entry.getKey() + ": " + entry.getValue());
-        }
+//        for(HashMap.Entry entry : frequency.entrySet())
+//        {
+//            System.out.println(entry.getKey() + ": " + entry.getValue());
+//        }
     }
 
     //this method adds a node for each character into the priority queue
@@ -119,7 +119,7 @@ public class Compress {
         int size = priorityQueue.size();
         Node x, y;
 
-        System.out.println("Printing inside createHuffmanTree: ");
+//        System.out.println("Printing inside createHuffmanTree: ");
         for(int i=1; i<size; i++)
         {
             Node node = new Node();
@@ -127,7 +127,7 @@ public class Compress {
             y = priorityQueue.poll();
             node.left = x;
             node.right = y;
-            System.out.println((char)x.character +": " + x.freq + "\t" + (char)y.character +": " + y.freq);
+//            System.out.println((char)x.character +": " + x.freq + "\t" + (char)y.character +": " + y.freq);
             node.freq = x.freq + y.freq;
             priorityQueue.add(node);
         }
@@ -152,16 +152,21 @@ public class Compress {
 
                 //read from input file and save the binary string into compressionCode
                 while ((c = bufferedReader.read()) != -1) {
-                    compressionCode = compressionCode + codes.get(c);
+//                    System.out.println(c);
+//                    System.out.println(codes.get(c));
+                    compressionCode.append(codes.get(c));
+//                    System.out.println(compressionCode.toString());
+//                    compressionCode = compressionCode + codes.get(c);
                 }
 
                 //add the pseudo-eof's binary equivalent
-                compressionCode += codes.get(-1);
+                compressionCode.append(codes.get(-1));
+//                compressionCode += codes.get(-1);
 
             }
 
-            System.out.println("Compression Code: ");
-            System.out.println(compressionCode);
+//            System.out.println("Compression Code: ");
+//            System.out.println(compressionCode);
 
             String bits = "";
             String currentByte;
@@ -175,7 +180,7 @@ public class Compress {
                 if(i%8==0)
                 {
                     j=i;
-                    System.out.println("bits: " + bits);
+//                    System.out.println("bits: " + bits);
                     character = convertBitsToDecimal(bits);
                     bufferedWriter.append((char)character);
                     bits = "";
@@ -242,7 +247,7 @@ public class Compress {
     public static void traverseInOrder (Node rootNode){
         //if this node is a leaf node, add the character and its corresponding code to the hashmap
         if(rootNode.getLeft() == null && rootNode.getRight() == null){
-            System.out.println((char)rootNode.character + ": " + code);
+//            System.out.println((char)rootNode.character + ": " + code);
             codes.put(rootNode.character, code);
 //            System.out.println("hm: "+ codes.get(rootNode.character));
         }
