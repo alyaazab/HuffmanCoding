@@ -225,13 +225,16 @@ public class Compress {
             bufferedWriter.append(String.valueOf(nOfFiles)).append("\n");
 
             System.out.println("code for each character");
+            System.out.println("Byte \t\t Code \t\t New Code");
             //write down each character and its code into the compressed file
             codes.forEach((key, value) -> {
                 try {
+                    int k = key;
+                    char c = (char)k;
                     bufferedWriter.append(String.valueOf(key)).append(": ");
                     bufferedWriter.append(value).append("\n");
-                    System.out.print(key +": ");
-                    System.out.println(value);
+                    System.out.println(key + " \t\t "+Integer.toBinaryString(k) + " \t\t " + value);
+                    //System.out.println(value);
                 } catch (IOException e) {
                     e.printStackTrace();
                 }
